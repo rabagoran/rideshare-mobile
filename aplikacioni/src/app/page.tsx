@@ -1,4 +1,4 @@
-import KartaUdhetimi from "@/commponents/KartaUdhetimi";
+import KartaUdhetimi from "@/components/KartaUdhetimi";
 import { udhetimet } from "@/lib/udhetimet";
 
 export default function Home() {

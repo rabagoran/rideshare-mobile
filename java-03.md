@@ -53,7 +53,7 @@ Kjo faqe lidhet me një udhëtim specifik dhe paraqet ndërfaqen për dërgimin 
 
 Është krijuar komponenti:
 
-`aplikacioni/src/commponents/KartaUdhetimi.tsx`
+`aplikacioni/src/components/KartaUdhetimi.tsx`
 
 Komponenti **KartaUdhetimi** përdoret për paraqitjen e informacionit të një udhëtimi në formë karte.
 
@@ -69,36 +69,21 @@ Ky file përmban të dhënat që përdoren nga faqet e RideShare për paraqitjen
 
 ## Prova 1 – Struktura e projektit
 
-Prova e parë është struktura e projektit Next.js në folderin `aplikacioni/`.
+**Hapat:** Hap folderin `aplikacioni/src/app/` dhe kontrollo faqen kryesore, faqen dinamike të udhëtimit, faqen e kërkesës dhe faqen `not-found`; kontrollo gjithashtu `src/components/` dhe `src/lib/`.
 
-Në projekt janë të pranishme:
-
-* `src/app/page.tsx`
-* `src/app/udhetimi/[id]/page.tsx`
-* `src/app/udhetimi/[id]/kerkesa/page.tsx`
-* `src/app/udhetimi/[id]/not-found.tsx`
-* `src/commponents/KartaUdhetimi.tsx`
-* `src/lib/udhetimet.ts`
-
-Kjo dëshmon krijimin e strukturës bazë të aplikacionit RideShare.
+**Rezultati real:** U verifikuan faqet `page.tsx`, `udhetimi/[id]/page.tsx`, `udhetimi/[id]/kerkesa/page.tsx` dhe `udhetimi/[id]/not-found.tsx`, si edhe komponenti `src/components/KartaUdhetimi.tsx` dhe të dhënat `src/lib/udhetimet.ts`.
 
 ## Prova 2 – Faqet e RideShare
 
-Prova e dytë është krijimi i tri faqeve kryesore:
+**Hapat:** Hap faqen kryesore dhe ndiq lidhjet e udhëtimeve te faqja dinamike e detajeve dhe te faqja e kërkesës; kontrollo rrugët përkatëse nën `src/app/udhetimi/[id]/`.
 
-1. Faqja kryesore e RideShare.
-2. Faqja e detajeve të një udhëtimi.
-3. Faqja për kërkesën për një udhëtim.
-
-Faqet janë të organizuara sipas strukturës së Next.js App Router.
+**Rezultati real:** `npm run build` përfundoi me sukses, kontrolli TypeScript kaloi dhe Next.js gjeneroi faqet kryesore, të detajeve dhe të kërkesës; ekziston edhe faqja `not-found.tsx` për udhëtime që nuk gjenden.
 
 ## Prova 3 – Komponenti i ripërdorshëm
 
-Prova e tretë është komponenti:
+**Hapat:** Kontrollo `src/components/KartaUdhetimi.tsx` dhe importin në `src/app/page.tsx`; komponenti merr një objekt të tipizuar `Udhetim` dhe përdoret gjatë paraqitjes së listës së udhëtimeve.
 
-`KartaUdhetimi.tsx`
-
-Ky komponent përdoret për paraqitjen e një udhëtimi dhe ndihmon që pjesët e ndërfaqes të jenë të organizuara dhe të ripërdorshme.
+**Rezultati real:** Komponenti paraqet nisjen, destinacionin, orën dhe vendet e lira, si dhe lidhjen për detajet e udhëtimit; importi përdor tani shtegun e saktë `@/components/KartaUdhetimi`.
 
 ## Përfundim
 
