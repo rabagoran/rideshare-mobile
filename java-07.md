@@ -2,14 +2,14 @@
 
 ## Rasti im
 
-Kodi personal për pronarin aktual të repository-t: P7-661
+Kodi personal për pronarin aktual të repository-t: P7-561
 
 GitHub: rabagoran
 
 Skenari: Rasti 1 — Lista dhe detajet
 
-Vlerat e gjeneruara për këtë llogari: Ferizaj → AAB, 10:25, 2 vende; ora e re
-10:30.
+Vlerat e gjeneruara për këtë llogari: Pejë → AAB, 08:15, 1 vend; ora e re
+08:20.
 
 ## Parashikimi
 
@@ -69,9 +69,9 @@ rezultati 404 nuk u verifikua.
 Pas përditësimit të `aplikacioni/.env.local`, e rindiza aplikacionin. Formati i
 `DATABASE_URL` u verifikua, por nga ky mjedis lidhja me Neon ende dështoi (`fetch
 failed`); `/api/udhetimet` ktheu HTTP 503. Duhet riprovuar nga rrjeti ku Neon
-është i arritshëm. Kodi P7-526 ishte gjeneruar për emrin `raba`; repository
-publik i kësaj pune është nën `rabagoran`, ndaj përputha rastin e raportit me
-llogarinë e repository-t dhe rregullin e kontrollit automatik.
+është i arritshëm. Kodi P7-526 ishte gjeneruar për emrin `raba`; kontrolli
+automatik konfirmoi se për pronarin aktual `rabagoran` duhet P7-561, ndaj
+raporti tani përdor kodin dhe vlerat e gjeneruara për llogarinë e repository-t.
 
 ## Ndihma nga AI
 
