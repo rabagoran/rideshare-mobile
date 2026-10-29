@@ -19,10 +19,9 @@ export default async function Detajet({
     return (
       <main>
         <h1>RideShare</h1>
-        <p role="alert">
-          Nuk u lidhëm me databazën. Provo përsëri.
-        </p>
-
+        <p role="alert">Detajet nuk u ngarkuan sepse databaza nuk u lidh.</p>
+        <p>Kontrollo lidhjen dhe provo përsëri, ose kthehu te lista.</p>
+        <p><Link className="action" href={`/udhetimi/${id}`} prefetch={false}>Provo përsëri</Link></p>
         <Link href="/">← Kthehu te lista</Link>
       </main>
     );
