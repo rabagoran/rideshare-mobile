@@ -21,8 +21,14 @@ ofrojë mënyrë për të provuar përsëri.
 
 ## Dy probleme
 
-1. `GET /api/udhetimet` ktheu HTTP 503, kështu lista nuk mundi të shfaqte
-   udhëtimet.
+1. Lokalisht `GET /api/udhetimet` kthente HTTP 503 dhe faqja kryesore tregonte
+   “Nuk u lidhëm me databazën”, edhe pse `DATABASE_URL` ishte i saktë dhe në
+   Vercel lista punonte. Kur e shfaqa gabimin e plotë në terminal, doli
+   `fetch failed` me shkakun `UNABLE_TO_VERIFY_LEAF_SIGNATURE`. Avast Antivirus
+   kontrollon lidhjet HTTPS me certifikatën e vet dhe Node.js nuk e njihte atë
+   certifikatë, kështu që e ndërpriste lidhjen me Neon. Problemi ishte te mjedisi
+   im, jo te kodi. E zgjidha duke e nisur serverin me certifikatat e Windows-it:
+   `$env:NODE_USE_SYSTEM_CA="1"; npm run dev`.
 2. Kur databaza nuk lidhej, faqja e detajeve tregonte gabimin dhe kthimin te
    lista, por nuk ofronte riprovim të qartë për të njëjtin ID.
 
@@ -35,49 +41,55 @@ për të njëjtin ID dhe ruan lidhjen për kthim te lista. `prefetch={false}` sh
 kërkesën automatike në sfond për të njëjtën faqe. Nuk ndryshova të dhëna
 udhëtimesh.
 
-### Prova 1
+### Prova 1 (e dështuar, para zgjidhjes së lidhjes)
 
-Hapat: Hapa `http://localhost:3000` dhe kontrollova `/api/udhetimet`.
+Hapat: Nisa `npm run dev`, hapa `http://localhost:3000` dhe kontrollova
+`/api/udhetimet`.
 
-Pritshmëria: Lista shfaq udhëtimet e databazës dhe API kthen HTTP 200.
+Pritshmëria: Lista shfaq tri udhëtimet e databazës dhe API kthen HTTP 200.
 
-Vëzhgimi: Faqja u përgjigj HTTP 200, por tregoi gabimin e lidhjes; API ktheu
-HTTP 503. Lista nuk u verifikua.
+Vëzhgimi: Faqja u hap, por tregoi “Nuk u lidhëm me databazën. Provo përsëri.”
+API ktheu HTTP 503. Në terminal pashë `fetch failed` /
+`UNABLE_TO_VERIFY_LEAF_SIGNATURE` (problemi 1 më lart).
 
-### Prova 2
+### Prova 2 (lista dhe detajet, pas zgjidhjes së lidhjes)
 
-Hapat: Hapa `/udhetimi/2` pas korrigjimit.
+Hapat: E nisa serverin me `$env:NODE_USE_SYSTEM_CA="1"; npm run dev`, hapa
+`http://localhost:3000` dhe pastaj “Shiko detajet” te udhëtimi me ID 2.
 
-Pritshmëria: Të shfaqen vlerat e të njëjtit udhëtim nga lista; në rast gabimi të
-databazës, të ketë udhëzim dhe mundësi riprovimi.
+Pritshmëria: Lista shfaq tri udhëtimet; detajet e ID 2 kanë të njëjtat vlera si
+karta në listë.
 
-Vëzhgimi: Databaza nuk u lidh, ndaj vlerat nuk u ngarkuan. Mesazhi i ri u shfaq
-me “Provo përsëri” dhe “Kthehu te lista”. Rrjedha me të dhëna reale nuk u
-verifikua.
+Vëzhgimi: Lista shfaqi Prishtinë – AAB, Fushë Kosovë – AAB dhe Lipjan – AAB;
+`/api/udhetimet` ktheu HTTP 200. Te `/udhetimi/2` u shfaq Fushë Kosovë – AAB,
+ora 08:15, vendtakimi “Te stacioni kryesor”, 1 vend i lirë dhe butoni “Kërko
+vend”, njësoj si te karta në listë. E njëjta gjë funksionoi edhe në Vercel:
+<https://rideshare-mobile-inky.vercel.app>.
 
-### Prova 3
+### Prova 3 (ID që nuk ekziston)
 
-Hapat: Hapa `/udhetimi/999999`.
+Hapat: Hapa `http://localhost:3000/udhetimi/999999`.
 
 Pritshmëria: Të shfaqet “Udhëtimi nuk u gjet” dhe lidhja për t'u kthyer te lista.
 
-Vëzhgimi: Kërkesa dështoi te lidhja me databazën para kontrollit të ID-së;
-rezultati 404 nuk u verifikua.
+Vëzhgimi: Faqja ktheu HTTP 404 me “Udhëtimi nuk u gjet” dhe lidhjen “Kthehu te
+lista”. Rezultati ishte i njëjtë në Vercel.
 
-## Ndryshimi i ri
+## Ndryshimi i hyrjes
 
-Pas përditësimit të `aplikacioni/.env.local`, e rindiza aplikacionin. Formati i
-`DATABASE_URL` u verifikua, por nga ky mjedis lidhja me Neon ende dështoi (`fetch
-failed`); `/api/udhetimet` ktheu HTTP 503. Duhet riprovuar nga rrjeti ku Neon
-është i arritshëm. Kodi P7-526 ishte gjeneruar për emrin `raba`; kontrolli
-automatik konfirmoi se për pronarin aktual `rabagoran` duhet P7-561, ndaj
-raporti tani përdor kodin dhe vlerat e gjeneruara për llogarinë e repository-t.
+Si hyrje të ndryshuar përdora vlerën kufitare nga kodi personal: në vend të një
+ID-je ekzistuese (2) provova një ID që nuk ekziston (999999). Aplikacioni
+dalloi saktë rastin pa e prishur faqen (Prova 3). Të dhënat e udhëtimeve në
+databazë nuk i ndryshova; vlerat e gjeneruara (Pejë → AAB, 08:15, 1 vend; ora e
+re 08:20) nuk i futa në Neon. Kodi P7-526 ishte gjeneruar fillimisht për emrin
+`raba`; për pronarin e repository-t `rabagoran` kodi i saktë është P7-561.
 
 ## Ndihma nga AI
 
-U përdor Codex për të lexuar udhëzimin, shqyrtuar kodin, zbatuar korrigjimin,
-testuar përgjigjet lokale dhe dokumentuar rezultatet. Parashikimi nuk paraqitet
-si punë e bërë pa AI. Demonstrimi me koleg nuk u krye.
+Përdora Codex për të lexuar udhëzimin, për të shqyrtuar kodin dhe për korrigjimin
+e faqes së detajeve. Përdora Claude Code për të gjetur pse lidhja me Neon
+dështonte vetëm lokalisht (certifikata e Avast), për deploy-in në Vercel dhe për
+të përditësuar provat në këtë raport. Demonstrimin me koleg nuk e bëra.
 
 ## Versionet
 
