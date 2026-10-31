@@ -41,7 +41,7 @@ për të njëjtin ID dhe ruan lidhjen për kthim te lista. `prefetch={false}` sh
 kërkesën automatike në sfond për të njëjtën faqe. Nuk ndryshova të dhëna
 udhëtimesh.
 
-### Prova 1 (e dështuar, para zgjidhjes së lidhjes)
+### Prova 1
 
 Hapat: Nisa `npm run dev`, hapa `http://localhost:3000` dhe kontrollova
 `/api/udhetimet`.
@@ -52,7 +52,7 @@ Vëzhgimi: Faqja u hap, por tregoi “Nuk u lidhëm me databazën. Provo përsë
 API ktheu HTTP 503. Në terminal pashë `fetch failed` /
 `UNABLE_TO_VERIFY_LEAF_SIGNATURE` (problemi 1 më lart).
 
-### Prova 2 (lista dhe detajet, pas zgjidhjes së lidhjes)
+### Prova 2
 
 Hapat: E nisa serverin me `$env:NODE_USE_SYSTEM_CA="1"; npm run dev`, hapa
 `http://localhost:3000` dhe pastaj “Shiko detajet” te udhëtimi me ID 2.
@@ -66,7 +66,7 @@ ora 08:15, vendtakimi “Te stacioni kryesor”, 1 vend i lirë dhe butoni “K�
 vend”, njësoj si te karta në listë. E njëjta gjë funksionoi edhe në Vercel:
 <https://rideshare-mobile-inky.vercel.app>.
 
-### Prova 3 (ID që nuk ekziston)
+### Prova 3
 
 Hapat: Hapa `http://localhost:3000/udhetimi/999999`.
 
@@ -75,7 +75,7 @@ Pritshmëria: Të shfaqet “Udhëtimi nuk u gjet” dhe lidhja për t'u kthyer 
 Vëzhgimi: Faqja ktheu HTTP 404 me “Udhëtimi nuk u gjet” dhe lidhjen “Kthehu te
 lista”. Rezultati ishte i njëjtë në Vercel.
 
-## Ndryshimi i hyrjes
+## Ndryshimi i ri
 
 Si hyrje të ndryshuar përdora vlerën kufitare nga kodi personal: në vend të një
 ID-je ekzistuese (2) provova një ID që nuk ekziston (999999). Aplikacioni
