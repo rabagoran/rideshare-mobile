@@ -32,7 +32,7 @@ Pritshmëria: Konfirmohet `Biblioteka`; pas shkrimit të dytë, vendtakimi i kon
 
 Vëzhgimi: Logjika e komponentit ruan veçmas fushën dhe konfirmimin, dhe refuzon tekstin bosh pas `trim()`. Prova ndërvepruese në shfletues nuk u krye në këtë sesion.
 
-### Prova me një hyrje të re — ndryshim pa konfirmim
+## Prova me një hyrje të re
 
 Hyrja që provova: Konfirmova fillimisht `Biblioteka`, pastaj shkrova `Parkingu` pa shtypur përsëri butonin e konfirmimit.
 
