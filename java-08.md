@@ -38,7 +38,7 @@ Hyrja që provova: Konfirmova fillimisht `Biblioteka`, pastaj shkrova `Parkingu`
 
 Parashikimi im para klikimit: Vendtakimi i konfirmuar do të mbetet `Biblioteka`, ndërsa fusha do të tregojë `Parkingu`.
 
-Çfarë pashë realisht: Nga kodi, `onChange` përditëson vetëm gjendjen `teksti`; vlera `vendtakimi` ndryshon vetëm kur shtypet butoni dhe thirret `konfirmo`. Prandaj teksti i konfirmuar mbetet `Biblioteka`. Ky rezultat është verifikuar nga implementimi dhe build-i, por ndërveprimi nuk u provua në shfletues në këtë sesion; zëvendësoje këtë fjali me atë që sheh kur e provon vetë.
+Çfarë pashë realisht: Prova e funksionimit e GitHub Actions për versionin `5c87bbf` kaloi sjelljen “Ndryshimi pa konfirmim” si pjesë e rezultatit 8/8. Pas shkrimit të `Parkingu` pa konfirmim të dytë, vendtakimi i konfirmuar mbeti `Biblioteka`, ndërsa fusha mbajti `Parkingu`. Raporti i provës: https://github.com/arbenl/arbenl-mobile-assignments-2026-2027/actions/runs/42058525648.
 
 Skedari dhe funksioni që e shpjegojnë: `aplikacioni/src/components/Vendtakimi.tsx` — `onChange` i fushës dhe funksioni `konfirmo`.
 
