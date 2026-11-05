@@ -1,0 +1,25 @@
+{
+  "week": 8,
+  "name": "Vendtakimi në RideShare",
+  "applicationDirectory": "aplikacioni",
+  "testRoute": "/java-08-test",
+  "detailRoute": "/udhetimi/2",
+  "component": "src/components/Vendtakimi.tsx",
+  "testIds": {
+    "component": "vendtakimi",
+    "input": "vendtakimi-input",
+    "confirmButton": "konfirmo-vendtakimin",
+    "locationButton": "perdor-vendndodhjen",
+    "status": "vendtakimi-status",
+    "confirmedMeetingPoint": "vendtakimi-konfirmuar"
+  },
+  "flows": [
+    "manual-confirmation-and-unconfirmed-edit",
+    "geolocation-permission-granted",
+    "geolocation-permission-denied",
+    "geolocation-position-unavailable",
+    "geolocation-timeout",
+    "geolocation-unsupported"
+  ],
+  "persistence": "local-component-state-only"
+}
