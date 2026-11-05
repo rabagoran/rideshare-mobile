@@ -32,6 +32,18 @@ Pritshmëria: Konfirmohet `Biblioteka`; pas shkrimit të dytë, vendtakimi i kon
 
 Vëzhgimi: Logjika e komponentit ruan veçmas fushën dhe konfirmimin, dhe refuzon tekstin bosh pas `trim()`. Prova ndërvepruese në shfletues nuk u krye në këtë sesion.
 
+### Prova me një hyrje të re — ndryshim pa konfirmim
+
+Hyrja që provova: Konfirmova fillimisht `Biblioteka`, pastaj shkrova `Parkingu` pa shtypur përsëri butonin e konfirmimit.
+
+Parashikimi im para klikimit: Vendtakimi i konfirmuar do të mbetet `Biblioteka`, ndërsa fusha do të tregojë `Parkingu`.
+
+Çfarë pashë realisht: Nga kodi, `onChange` përditëson vetëm gjendjen `teksti`; vlera `vendtakimi` ndryshon vetëm kur shtypet butoni dhe thirret `konfirmo`. Prandaj teksti i konfirmuar mbetet `Biblioteka`. Ky rezultat është verifikuar nga implementimi dhe build-i, por ndërveprimi nuk u provua në shfletues në këtë sesion; zëvendësoje këtë fjali me atë që sheh kur e provon vetë.
+
+Skedari dhe funksioni që e shpjegojnë: `aplikacioni/src/components/Vendtakimi.tsx` — `onChange` i fushës dhe funksioni `konfirmo`.
+
+Çfarë kuptova ose korrigjova: Teksti i shkruar dhe vendtakimi i konfirmuar ruhen ndaras. Ndryshimi i fushës nuk e konfirmon vetvetiu vendin e ri.
+
 ### Prova 2 — Leja refuzohet
 
 Hapat: Në një shfletues me HTTPS ose localhost, blloko lejen e vendndodhjes dhe kliko `Përdor vendndodhjen time`; pastaj shkruaj `Parkingu` dhe konfirmo.
