@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { gjejUdhetimin } from "@/lib/udhetimet";
 import Vendtakimi from "@/components/Vendtakimi";
+import Preferimi from "@/components/Preferimi";
+import { lexoGjendjenEPreferimeve } from "@/lib/preferimet";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +32,9 @@ export default async function Detajet({
 
   if (!udhetim) notFound();
 
+  let preferimet = { perdoruesiKycur: false, udhetimet: [] as string[], numer: 0 };
+  try { preferimet = await lexoGjendjenEPreferimeve(); } catch { /* Faqja e udhëtimit mbetet e lexueshme nëse tabela mungon. */ }
+
   return (
     <main>
       <Link href="/">← Kthehu te lista</Link>
@@ -41,6 +46,9 @@ export default async function Detajet({
       <p>Ora: {udhetim.ora}</p>
       <p>Vendtakimi: {udhetim.vendtakimi}</p>
       <p>Vende të lira: {udhetim.vende}</p>
+
+      <Preferimi udhetimId={udhetim.id} iRuajtur={preferimet.udhetimet.includes(udhetim.id)}
+        numerFillestar={preferimet.numer} perdoruesiKycur={preferimet.perdoruesiKycur} />
 
       <Vendtakimi />
 

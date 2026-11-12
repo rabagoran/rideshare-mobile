@@ -15,4 +15,9 @@ body { margin: 0; font-family: system-ui, sans-serif;
   .meeting-actions .action { border: 0; font: inherit; cursor: pointer; }
   .meeting-actions .secondary-action { background: #176b57; }
   .meeting-actions .action:disabled { background: #39455b; cursor: wait; }
+  .favorite-box { margin: 16px 0; padding: 14px; border: 1px solid #8090aa; border-radius: 12px; }
+  .favorite-button { min-height: 44px; padding: 8px 14px; border: 0; border-radius: 8px; background: #3548d4; color: white; font: inherit; cursor: pointer; }
+  .favorite-button:disabled { background: #39455b; cursor: wait; }
+  .favorite-button span { color: #ffd45c; }
+  .favorite-note { color: #bac7dc; }
 

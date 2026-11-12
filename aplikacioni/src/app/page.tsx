@@ -1,6 +1,7 @@
 import Link from "next/link";
 import KartaUdhetimi from "@/components/KartaUdhetimi";
 import { lexoUdhetimet, type Udhetim } from "@/lib/udhetimet";
+import { lexoGjendjenEPreferimeve } from "@/lib/preferimet";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,9 @@ export default async function Home() {
     );
   }
 
+  let preferimet = { perdoruesiKycur: false, udhetimet: [] as string[], numer: 0 };
+  try { preferimet = await lexoGjendjenEPreferimeve(); } catch { /* Lista mbetet e përdorshme nëse tabela e preferimeve mungon. */ }
+
   return (
     <main>
       <h1>RideShare · Udhëtimet për AAB</h1>
@@ -30,7 +34,9 @@ export default async function Home() {
       ) : (
         <div className="trip-list">
           {udhetimet.map((udhetim) => (
-            <KartaUdhetimi key={udhetim.id} udhetim={udhetim} />
+            <KartaUdhetimi key={udhetim.id} udhetim={udhetim}
+              iRuajtur={preferimet.udhetimet.includes(udhetim.id)} numerPreferimesh={preferimet.numer}
+              perdoruesiKycur={preferimet.perdoruesiKycur} />
           ))}
         </div>
       )}
