@@ -2,6 +2,7 @@ import Link from "next/link";
 import KartaUdhetimi from "@/components/KartaUdhetimi";
 import { lexoUdhetimet, type Udhetim } from "@/lib/udhetimet";
 import { lexoGjendjenEPreferimeve } from "@/lib/preferimet";
+import RifreskoUdhetimet from "@/components/RifreskoUdhetimet";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,7 @@ export default async function Home() {
 
   return (
     <main>
+      <RifreskoUdhetimet gjendjaFillestare={JSON.stringify(udhetimet.map(({ id, vende, ora }) => [id, vende, ora]))} />
       <h1>RideShare · Udhëtimet për AAB</h1>
       <p><Link href="/panel">Hyr / Paneli im</Link></p>
       <p>Burimi: Neon · të dhëna fiktive për ushtrime</p>

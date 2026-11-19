@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { PamjaLive } from "@/lib/kerkesa";
 
-type Status = "pa_derguar" | "ne_pritje" | "pranuar" | "refuzuar" | "pa_vende" | "hyr" | "gabim";
+type Status = "pa_derguar" | "ne_pritje" | "pranuar" | "refuzuar" | "pa_vende" | "hyr" | "gabim" | "udhetim" | "rol";
 
 export default function KerkesaLive({ udhetimId, vendeFillestare }: { udhetimId: string; vendeFillestare: number }) {
   const [vende, setVende] = useState(vendeFillestare);
@@ -35,7 +35,8 @@ export default function KerkesaLive({ udhetimId, vendeFillestare }: { udhetimId:
         body: JSON.stringify({ udhetimId }),
       });
       const result = await response.json() as { status: Status };
-      setStatus(result.status);
+      if (["hyr", "pa_vende", "udhetim", "rol"].includes(result.status)) setStatus(result.status);
+      else setStatus(response.ok ? result.status : "gabim");
     } catch {
       setStatus("gabim");
     } finally {
@@ -51,6 +52,8 @@ export default function KerkesaLive({ udhetimId, vendeFillestare }: { udhetimId:
     pa_vende: "Nuk ka vende të lira.",
     hyr: "Hyr me GitHub për të dërguar kërkesë.",
     gabim: "Kërkesën nuk mundëm ta dërgojmë. Kontrollo lidhjen dhe provo sërish.",
+    udhetim: "Ky udhëtim nuk u gjet.",
+    rol: "Kërkesë mund të dërgojë vetëm profili me rolin udhëtar.",
   };
 
   return <section className="live-request" aria-live="polite">
@@ -62,6 +65,6 @@ export default function KerkesaLive({ udhetimId, vendeFillestare }: { udhetimId:
     {status === "pa_derguar" && <button className="action" type="button" disabled={vende < 1 || dukeDergaur} onClick={dergo}>
       {dukeDergaur ? "Po dërgohet…" : "Dërgo kërkesë"}
     </button>}
-    {status === "ne_pritje" && vende > 0 && <button className="action" type="button" disabled={dukeDergaur} onClick={dergo}>Provo sërish</button>}
+    {status === "refuzuar" && vende > 0 && <button className="action" type="button" disabled={dukeDergaur} onClick={dergo}>Dërgo kërkesë të re</button>}
   </section>;
 }

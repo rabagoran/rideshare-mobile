@@ -16,11 +16,24 @@ export async function profiliIm(): Promise<Profil | null> {
   return (rows[0] as Profil | undefined) ?? null;
 }
 
+export async function ndryshoRolin(rol: string) {
+  const p = await profiliIm();
+  if (!p) return "hyr";
+  if (rol !== "shofer" && rol !== "udhetar") return "fushe";
+  const sql = getSql();
+  const rows = await sql`
+    UPDATE profilet SET roli = ${rol}
+    WHERE github_id = ${p.id}
+    RETURNING github_id
+  `;
+  return rows.length === 1 ? "roli_ruajtur" : "ndaluar";
+}
+
 export async function ndryshoOren(id: string, ora: string) {
   const p = await profiliIm();
   if (!p) return "hyr";
   if (p.roli !== "shofer") return "ndaluar";
-  if (!/^[123]$/.test(id) || !/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(ora)) return "fushe";
+  if (!/^[a-zA-Z0-9-]{1,80}$/.test(id) || !/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(ora)) return "fushe";
   const sql = getSql();
   const rows = await sql`UPDATE udhetimet SET ora = ${ora}
     WHERE id = ${id} AND shofer_id = ${p.id}

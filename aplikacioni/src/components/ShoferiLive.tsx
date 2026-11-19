@@ -17,7 +17,7 @@ function UdhetimiIShoferit({ udhetim }: { udhetim: Udhetim }) {
   const [vende, setVende] = useState(udhetim.vende);
   const [kerkesat, setKerkesat] = useState<Kerkese[]>([]);
   const [lidhja, setLidhja] = useState<"po_lidhet" | "lidhur" | "rilidhje">("po_lidhet");
-  const [dukePranuar, setDukePranuar] = useState<number | null>(null);
+  const [dukeVepruar, setDukeVepruar] = useState<number | null>(null);
   const [mesazh, setMesazh] = useState("");
 
   useEffect(() => {
@@ -34,17 +34,17 @@ function UdhetimiIShoferit({ udhetim }: { udhetim: Udhetim }) {
     return () => source.close();
   }, [udhetim.id]);
 
-  async function prano(id: number) {
-    setDukePranuar(id);
+  async function pergjigju(id: number, veprimi: "prano" | "refuzo") {
+    setDukeVepruar(id);
     setMesazh("");
     try {
-      const response = await fetch(`/api/kerkesat/${id}/prano`, { method: "POST" });
+      const response = await fetch(`/api/kerkesat/${id}/${veprimi === "prano" ? "prano" : "refuzo"}`, { method: "POST" });
       const result = await response.json() as { status: string };
-      setMesazh(result.status === "pranuar" ? "Kërkesa u pranua." : result.status === "nuk_mund" ? "Kërkesa nuk u pranua: nuk ka vende ose është përgjigjur më parë." : "Nuk u ruajt përgjigjja. Provo sërish.");
+      setMesazh(result.status === "pranuar" ? "Kërkesa u pranua." : result.status === "refuzuar" ? "Kërkesa u refuzua." : result.status === "nuk_mund" ? "Kërkesa nuk mund të ndryshohet më." : "Nuk u ruajt përgjigjja. Provo sërish.");
     } catch {
       setMesazh("Lidhja dështoi. Po rilidhemi; statusi i fundit shihet sërish pas rilidhjes.");
     } finally {
-      setDukePranuar(null);
+      setDukeVepruar(null);
     }
   }
 
@@ -58,9 +58,12 @@ function UdhetimiIShoferit({ udhetim }: { udhetim: Udhetim }) {
     {kerkesat.length === 0 ? <p>Nuk ka kërkesë.</p> : <ul>
       {kerkesat.map((kerkes) => <li key={kerkes.id}>
         {kerkes.emri}: {kerkes.status === "ne_pritje" ? "në pritje" : kerkes.status === "pranuar" ? "pranuar" : "refuzuar"}
-        {kerkes.status === "ne_pritje" && <button type="button" disabled={dukePranuar !== null || vende < 1} onClick={() => prano(kerkes.id)}>
-          {dukePranuar === kerkes.id ? "Po ruhet…" : vende < 1 ? "Nuk ka vende" : "Prano"}
-        </button>}
+        {kerkes.status === "ne_pritje" && <span className="request-actions">
+          <button type="button" disabled={dukeVepruar !== null || vende < 1} onClick={() => pergjigju(kerkes.id, "prano")}>
+            {dukeVepruar === kerkes.id ? "Po ruhet…" : vende < 1 ? "Nuk ka vende" : "Prano"}
+          </button>
+          <button type="button" disabled={dukeVepruar !== null} onClick={() => pergjigju(kerkes.id, "refuzo")}>Refuzo</button>
+        </span>}
       </li>)}
     </ul>}
   </article>;

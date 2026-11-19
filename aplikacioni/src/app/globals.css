@@ -25,4 +25,9 @@ body { margin: 0; font-family: system-ui, sans-serif;
   .driver-trips { margin-top: 28px; }
   .driver-trip button { min-height: 40px; margin-left: 12px; padding: 6px 12px; border: 0; border-radius: 8px; background: #176b57; color: white; font: inherit; cursor: pointer; }
   .driver-trip button:disabled { background: #39455b; cursor: wait; }
+  .request-actions { display: inline-flex; gap: 8px; margin-left: 10px; }
+  .request-actions button:last-child { background: #8b3542; }
+  .role-form, .create-trip, .edit-trip-time, .traveler-requests { margin: 20px 0; padding: 18px; border: 1px solid #8090aa; border-radius: 12px; }
+  .role-form button, .create-trip button, .edit-trip-time button { min-height: 42px; margin-top: 12px; padding: 8px 14px; border: 0; border-radius: 8px; background: #3548d4; color: white; font: inherit; cursor: pointer; }
+  .role-form select, .edit-trip-time select { min-height: 44px; margin: 8px 0; padding: 8px; border: 1px solid #8090aa; border-radius: 8px; background: #111b2d; color: #edf2fc; font: inherit; }
 

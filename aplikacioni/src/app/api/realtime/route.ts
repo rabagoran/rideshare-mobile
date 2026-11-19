@@ -18,7 +18,7 @@ export async function GET(request: Request) {
   const profile = await profiliIm();
   if (!profile) return Response.json({ error: "Hyr me GitHub." }, { status: 401 });
   const udhetimId = new URL(request.url).searchParams.get("udhetimId") ?? "";
-  if (!/^\d+$/.test(udhetimId)) return Response.json({ error: "ID e pavlefshme." }, { status: 400 });
+  if (!/^[a-zA-Z0-9-]{1,80}$/.test(udhetimId)) return Response.json({ error: "ID e pavlefshme." }, { status: 400 });
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
