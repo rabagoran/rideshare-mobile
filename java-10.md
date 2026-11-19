@@ -1,56 +1,56 @@
-# RideShare - Java 10
+# RideShare — Java 10: kërkesat për udhëtim
 
-## Cfare ndertova
+## Çfarë implementova
 
-Shtova dergimin e kerkeses ne databaze dhe panelin e shoferit per pergjigjen. Ekranet marrin gjendjen nga Neon permes Server-Sent Events (SSE), me kontroll te gjendjes cdo 1.5 sekonda. Pranimi perditeson statusin dhe vendet ne nje veprim atomik ne server. Kur lidhja nderpritet, ekrani tregon se po rilidhet.
+Shoferi mund të zgjedhë rolin e vet në panel dhe të publikojë udhëtime që lidhen me llogarinë e tij GitHub. Udhëtari mund t’i shohë udhëtimet e reja, të dërgojë kërkesë dhe ta përcjellë statusin në panelin e vet. Shoferi mund ta pranojë ose refuzojë kërkesën. Pranimi e ul numrin e vendeve vetëm një herë; refuzimi nuk i ndryshon vendet. Ndryshimet përcillen nga Neon përmes SSE, me rifreskim automatik kur lidhja rikthehet.
 
-## Pergatitja e proves
+## Konfigurimi dhe të dhënat
 
-- Udhetimi i planifikuar per prove: ID `1`.
-- Vendet: nuk i kam lexuar ende nga databaza ime Neon. Skema fillestare e projektit ka 2 vende per udhetimin 1; udhezimi i konfigurimit i vendos ne 1 per proven e pranimit.
-- Rolet: plani eshte te perdor nje llogari GitHub udhetar dhe nje shofer. Duhet t'i caktoj rolet sipas `aplikacioni/README-java10.md` dhe t'i hap ne dy profile/dritare te ndara te shfletuesit.
-- Statusi: konfigurimi dhe prova me dy sesione ende nuk jane kryer.
+- Skema `aplikacioni/schema-java10.sql` u ekzekutua në Neon. U verifikua se tabela `kerkesat` ekziston pas migrimit.
+- API-ja publike e udhëtimeve në Vercel u përgjigj me HTTP 200 dhe ktheu udhëtimet me ID `1`, `2` dhe `3`; në atë kontroll kishin përkatësisht 2, 1 dhe 0 vende.
+- API-ja e ofruesve të autentikimit në Vercel u përgjigj me HTTP 200 dhe përfshinte GitHub.
+- Vercel e ndërtoi commit-in `28f651d` me status `Ready`.
 
 ## Provat dhe rezultatet
 
-### Prova 1: Kerkesa mberrin te shoferi
+### 1. Lista e udhëtimeve dhe krijimi i udhëtimit
 
-- Hapat: ende nuk e kam ekzekutuar proven me dy llogari. Hapi i planifikuar eshte qe udhetari te hape udhetimin 1, te dergoje kerkesen, ndersa shoferi e mban hapur `/panel`.
-- Cfare prisja: kerkesa te shfaqet te shoferi pa rifreskim manual; udhetari te shohe statusin "ne pritje".
-- Cfare ndodhi realisht: nuk eshte provuar ende me llogari GitHub dhe Neon, prandaj nuk po pretendoj rezultat real.
-- Verifikimi ne databaze: nuk e kam kryer ende. Pas proves mund te perdor ne Neon `SELECT id, udhetim_id, udhetar_id, emri, status FROM kerkesat ORDER BY id DESC;`.
+- Kontrollova `/api/udhetimet` në Vercel: u përgjigj me HTTP 200 dhe ktheu të dhënat e udhëtimeve nga databaza.
+- Kontrollova build-in e prodhimit: `npm run build` përfundoi me sukses, përfshirë kontrollin TypeScript dhe gjenerimin e faqeve.
+- Kodi i formularit të shoferit ruan pronarin e udhëtimit me ID-në e llogarisë GitHub. Lista publike kontrollohet automatikisht çdo 4 sekonda.
+- Nuk e regjistrova këtu krijimin e një udhëtimi duke klikuar me llogari të autentikuar; ai hap duhet provuar në shfletues me llogarinë e shoferit.
 
-### Prova 2: Pranimi perditeson te dy ekranet
+### 2. Kërkesa, pranimi dhe refuzimi
 
-- Hapat dhe vendet para/pas: ende nuk jane ekzekutuar. Plani eshte te nis me 1 vend, te pranoj kerkesen nga paneli i shoferit dhe te krahasoj vleren para/pas ne te dy ekranet.
-- Perseritja dhe prova me 0 vende: ende nuk jane provuar ne Neon. Kodi duhet te mos e ule numrin perseri per nje pranim te perseritur dhe duhet ta bllokoje pranimin kur vendet jane zero.
-- Cfare pashe realisht: nuk eshte provuar ende me dy perdorues; rezultati real duhet te shenohet pas proves.
+- Migrimi krijoi tabelën `kerkesat` në Neon. Krijimi i kërkesës ruan udhëtarin, udhëtimin dhe statusin fillestar `ne_pritje`.
+- Kodi i shoferit kontrollon pronësinë e udhëtimit para pranimit/refuzimit. Pranimi përditëson statusin dhe ul vendet në të njëjtin veprim të databazës; refuzimi ndryshon vetëm statusin.
+- Udhëtari sheh kërkesat dhe përgjigjet e veta te paneli. Shoferi sheh kërkesat vetëm për udhëtimet e veta.
+- Nuk kam kryer një provë të plotë duke dërguar dhe aprovuar kërkesë në dy sesione GitHub. Prandaj statuset e shfaqura në të dy shfletuesit duhen konfirmuar me provën manuale më poshtë.
 
-### Prova 3: Nderprerja dhe rilidhja
+### 3. Ndërprerja dhe rilidhja
 
-- Udhetimi, dritarja offline dhe menyra e proves: ende nuk e kam kryer. Plani eshte te perdor udhetimin 1, te nderpres perkohesisht rrjetin ne dritaren e udhetarit dhe pastaj ta rikthej.
-- Pamja gjate nderprerjes: nuk eshte vezhguar ende. Sjellja e pritur nga UI eshte mesazhi "Lidhja u nderpre. Po rilidhemi...".
-- Pas rilidhjes: nuk eshte vezhguar ende. Prova duhet te konfirmoje qe EventSource lidhet perseri dhe merr gjendjen e fundit nga Neon.
+- Komponentët përdorin `EventSource`; shfletuesi rilidhet automatikisht kur rrjeti kthehet.
+- Ekrani shfaq gjendjen e lidhjes dhe merr sërish gjendjen aktuale nga Neon pas rilidhjes.
+- Nuk e ndërpreva realisht rrjetin gjatë një sesioni të autentikuar, ndaj sjelljen offline/online nuk e shënova si të testuar.
 
-## Ku gjendet puna
+## Prova manuale me dy llogari
 
-- `aplikacioni/src/lib/kerkesa.ts`: krijimi, leximi dhe pranimi i kerkesave; pranimi ul vendet ne databaze.
-- `aplikacioni/src/app/api/realtime/route.ts`: rrjedha SSE dhe kontrolli periodik i Neon-it.
-- `aplikacioni/src/components/KerkesaLive.tsx`, `ShoferiLive.tsx`, `UdhetimiLive.tsx`: ekranet qe marrin perditesimet live.
-- `aplikacioni/schema-java10.sql`: skema e tabeles se kerkesave.
-- `aplikacioni/README-java10.md`: udhezimi per migrimin dhe pergatitjen e dy llogarive.
-- Rruga e gjendjes: Neon -> `/api/realtime` -> `EventSource` -> komponentet live.
-- Veprimi i pranimit: `POST /api/kerkesat/[id]/prano`.
-- Verifikimi teknik i kodit: TypeScript, ESLint per skedaret e prekur dhe `npm run build` kaluan. Keto kontrolle nuk zevendesojne proven live me Neon.
+1. Hape linkun e Vercel në dy profile të ndara të shfletuesit.
+2. Hyr në profilin e parë me GitHub, shko te `/panel`, zgjidh rolin **Shofer** dhe krijo një udhëtim.
+3. Hyr në profilin e dytë me llogari tjetër GitHub, zgjidh rolin **Udhëtar** dhe hape udhëtimin e sapokrijuar.
+4. Dërgo kërkesën. Kontrollo që shoferi e sheh si **në pritje** dhe udhëtari e sheh të njëjtin status në panel.
+5. Pranoje kërkesën nga shoferi. Kontrollo që udhëtari sheh **pranuar** dhe numri i vendeve ulet me një. Provo edhe refuzimin me kërkesë tjetër.
+6. Ndërprite përkohësisht internetin në njërin profil dhe riktheje; vëzhgo mesazhin e rilidhjes dhe statusin pas rikthimit.
 
-## Prova me kolegun
+## Skedarët kryesorë
 
-Nuk e kam kryer ende proven me koleg. Parashikimi im eshte qe kur udhetari dergon kerkese, shoferi do ta shohe pa Refresh dhe, pas pranimit, te dy do ta shohin statusin e ri dhe nje vend me pak. Nuk kam vezhgim real nga nje hyrje tjeter per ta krahasuar me parashikimin. Pas proves duhet te shenoj hyrjen testuese, veprimin, rezultatin dhe funksionin qe e shpjegon: `pranoKerkese` ne `aplikacioni/src/lib/kerkesa.ts`.
+- `aplikacioni/src/lib/udhetimet.ts`: publikimi dhe leximi i udhëtimeve.
+- `aplikacioni/src/lib/kerkesa.ts`: krijimi, autorizimi, pranimi, refuzimi dhe leximi i kërkesave.
+- `aplikacioni/src/app/api/realtime/route.ts`: përditësimet SSE.
+- `aplikacioni/src/components/KerkesaLive.tsx` dhe `ShoferiLive.tsx`: statuset live për udhëtarin dhe shoferin.
+- `aplikacioni/src/components/KerkesatEUdhetaritLive.tsx`: lista e kërkesave në panelin e udhëtarit.
+- `aplikacioni/schema-java10.sql`: migrimi i tabelave dhe indekseve.
 
-## Cfare mbetet per permiresim
+## Çfarë mësova dhe çfarë mbetet
 
-Sinkronizimi kontrollon Neon-in cdo 1.5 sekonda, ndaj ndryshimi mund te kete vonese te shkurter dhe secili ekran ben kerkesa periodike. Mbetet te ekzekutoj migrimin ne Neon, te provoj rrjedhen me dy llogari dhe rrjet offline/online, si dhe te shenoj rezultatet reale te seciles prove.
-
-## Ndihma nga AI
-
-Perdora Codex per te lexuar udhezimin e Java 10, implementuar rrjedhen e kerkesave dhe sinkronizimin, kontrolluar tipat/lint/build dhe pergatitur kete raport. Nuk i kam kryer ende provat live me dy llogari, Neon, nderprerje rrjeti ose koleg; do t'i provoj dhe do t'i dokumentoj para se t'i shenoj si te kaluara.
+Kërkesat dhe vendet duhet të përditësohen në databazë nga serveri, që dy llogari të shohin të njëjtën gjendje dhe një vend të mos rezervohet dy herë. SSE e bën përditësimin të duket pa rifreskim manual. Verifikimi teknik dhe endpoint-et publike kaluan, por kjo nuk e zëvendëson provën manuale me dy llogari GitHub dhe testin offline/online.

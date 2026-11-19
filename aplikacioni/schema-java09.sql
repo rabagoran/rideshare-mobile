@@ -1,4 +1,3 @@
--- Ekzekuto në Neon SQL Editor pas krijimit të tabelave udhetimet dhe profilet.
 CREATE TABLE IF NOT EXISTS preferimet (
   github_id TEXT NOT NULL REFERENCES profilet(github_id) ON DELETE CASCADE,
   udhetim_id TEXT NOT NULL REFERENCES udhetimet(id) ON DELETE CASCADE,
