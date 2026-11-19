@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { gjejUdhetimin } from "@/lib/udhetimet";
 import Vendtakimi from "@/components/Vendtakimi";
 import Preferimi from "@/components/Preferimi";
+import UdhetimiLive from "@/components/UdhetimiLive";
 import { lexoGjendjenEPreferimeve } from "@/lib/preferimet";
 
 export const dynamic = "force-dynamic";
@@ -45,25 +46,13 @@ export default async function Detajet({
 
       <p>Ora: {udhetim.ora}</p>
       <p>Vendtakimi: {udhetim.vendtakimi}</p>
-      <p>Vende të lira: {udhetim.vende}</p>
+      <UdhetimiLive udhetimId={udhetim.id} vendeFillestare={udhetim.vende} />
 
       <Preferimi udhetimId={udhetim.id} iRuajtur={preferimet.udhetimet.includes(udhetim.id)}
         numerFillestar={preferimet.numer} perdoruesiKycur={preferimet.perdoruesiKycur} />
 
       <Vendtakimi />
 
-      {udhetim.vende > 0 ? (
-        <Link
-          className="action"
-          href={`/udhetimi/${id}/kerkesa`}
-        >
-          Kërko vend
-        </Link>
-      ) : (
-        <button className="action" disabled>
-          Nuk ka vende të lira
-        </button>
-      )}
     </main>
   );
 }

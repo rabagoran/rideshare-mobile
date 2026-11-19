@@ -2,6 +2,8 @@ import Link from "next/link";
 import Hyrja from "@/components/Hyrja";
 import { profiliIm } from "@/lib/lejet";
 import { ruajOren } from "./actions";
+import { lexoUdhetimetEShoferit } from "@/lib/kerkesa";
+import ShoferiLive from "@/components/ShoferiLive";
 
 export const dynamic = "force-dynamic";
 const mesazhet: Record<string, string> = {
@@ -25,14 +27,17 @@ export default async function Panel({ searchParams }: { searchParams: Promise<{ 
       <p>ID ime GitHub: <code>{p.id}</code></p>
     </>}
     <Hyrja brenda={Boolean(p)} />
-    {p?.roli === "shofer" ? <form action={ruajOren}>
+    {p?.roli === "shofer" ? <>
+    <form action={ruajOren}>
       <h2>Ndrysho orën e udhëtimit tim</h2>
       <input type="hidden" name="id" value="2" />
       <label htmlFor="ora">Ora e re</label>{" "}
       <input id="ora" name="ora" type="time" defaultValue="08:15" required />{" "}
       <button type="submit">Ruaj orën</button>
       <p>Formulari provon ID 2. Serveri verifikon pronarin edhe nëse ID ndryshohet.</p>
-    </form> : p && <p>Si udhëtar mund të shohësh udhëtimet; nuk mund të ndryshosh orën e shoferit.</p>}
+    </form>
+    <ShoferiLive udhetimet={await lexoUdhetimetEShoferit(p.id)} />
+    </> : p && <p>Si udhëtar mund të shohësh udhëtimet; nuk mund të ndryshosh orën e shoferit.</p>}
     <p><Link href="/">Kthehu te udhëtimet</Link></p>
   </main>;
 }
