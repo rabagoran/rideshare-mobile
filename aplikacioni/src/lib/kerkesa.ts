@@ -58,7 +58,7 @@ export async function pranoKerkese(id: number) {
   const sql = getSql();
   const rows = await sql`
     WITH candidate AS MATERIALIZED (
-      SELECT k.id, k.udhetim_id
+      SELECT k.id, k.udhetim_id, k.udhetar_id
       FROM kerkesat k
       JOIN udhetimet u ON u.id = k.udhetim_id
       WHERE k.id = ${id} AND k.status = 'ne_pritje'
@@ -69,13 +69,18 @@ export async function pranoKerkese(id: number) {
       FROM candidate c
       WHERE u.id = c.udhetim_id AND u.vende > 0
       RETURNING u.id
-    ), prano AS (
+    ), pergjigju AS (
       UPDATE kerkesat k SET status = 'pranuar', perditesuar_ne = NOW()
       FROM candidate c, zbrit_vendet z
       WHERE k.id = c.id AND k.status = 'ne_pritje'
-      RETURNING k.id
+      RETURNING k.id, k.udhetar_id, k.status
+    ), njofto AS (
+      INSERT INTO njoftimet (kerkesa_id, udhetar_id, tipi)
+      SELECT id, udhetar_id, status FROM pergjigju
+      ON CONFLICT (kerkesa_id) DO NOTHING
+      RETURNING id
     )
-    SELECT id FROM prano
+    SELECT p.id FROM pergjigju p LEFT JOIN njofto n ON TRUE
   `;
   if (rows.length) return "pranuar";
   const current = await sql`SELECT status FROM kerkesat WHERE id = ${id}`;
@@ -90,12 +95,20 @@ export async function refuzoKerkese(id: number) {
 
   const sql = getSql();
   const rows = await sql`
-    UPDATE kerkesat k SET status = 'refuzuar', perditesuar_ne = NOW()
-    FROM udhetimet u
-    WHERE k.id = ${id} AND k.udhetim_id = u.id AND k.status = 'ne_pritje'
-      AND u.shofer_id = ${profili.id}
-      AND EXISTS (SELECT 1 FROM profilet p WHERE p.github_id = ${profili.id} AND p.roli = 'shofer')
-    RETURNING k.id
+    WITH pergjigju AS (
+      UPDATE kerkesat k SET status = 'refuzuar', perditesuar_ne = NOW()
+      FROM udhetimet u
+      WHERE k.id = ${id} AND k.udhetim_id = u.id AND k.status = 'ne_pritje'
+        AND u.shofer_id = ${profili.id}
+        AND EXISTS (SELECT 1 FROM profilet p WHERE p.github_id = ${profili.id} AND p.roli = 'shofer')
+      RETURNING k.id, k.udhetar_id, k.status
+    ), njofto AS (
+      INSERT INTO njoftimet (kerkesa_id, udhetar_id, tipi)
+      SELECT id, udhetar_id, status FROM pergjigju
+      ON CONFLICT (kerkesa_id) DO NOTHING
+      RETURNING id
+    )
+    SELECT p.id FROM pergjigju p LEFT JOIN njofto n ON TRUE
   `;
   if (rows.length) return "refuzuar";
   const current = await sql`SELECT status FROM kerkesat WHERE id = ${id}`;
